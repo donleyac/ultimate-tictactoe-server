@@ -1,0 +1,51 @@
+{
+ "board": {
+   "00": {
+     "board": [[0,0,0],[0,0,0],[0,0,0]],
+     "selectable": true,
+     "winner": null
+   },
+   "01": {
+     "board": [[0,0,0],[0,0,0],[0,0,0]],
+     "selectable": true,
+     "winner": null
+   },
+   "02": {
+     "board": [[0,0,1],[0,0,0],[0,0,0]],
+     "selectable": true,
+     "winner": null
+   },
+   "10": {
+     "board": [[0,0,0],[0,0,0],[0,0,0]],
+     "selectable": true,
+     "winner": null
+   },
+   "11": {
+     "board": [[0,0,0],[0,0,0],[0,0,0]],
+     "selectable": true,
+     "winner": null
+   },
+   "12": {
+     "board": [[0,0,0],[0,0,0],[0,0,0]],
+     "selectable": true,
+     "winner": null
+   },
+   "20": {
+     "board": [[0,0,0],[0,0,0],[0,0,0]],
+     "selectable": true,
+     "winner": null
+   },
+   "21": {
+     "board": [[0,0,0],[0,0,0],[0,0,0]],
+     "selectable": true,
+     "winner": null
+   },
+   "22": {
+     "board": [[0,0,0],[0,0,0],[0,0,0]],
+     "selectable": true,
+     "winner": null
+   }
+ },
+ "winner": null,
+ "player": 1
+}
