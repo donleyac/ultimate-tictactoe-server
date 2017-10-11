@@ -19,41 +19,42 @@ export function getInitial() {
   });
 }
 export function placePiece(state, grid, cell, playerId) {
-  //Set cell value
-  return state.updateIn(
+  //Place Piece in cells
+  let placed = state.updateIn(
     ["board", grid, "board"],
     0,
     board => board.setIn(cell, playerId)
   );
-  // //check winner
-  // let winner = placed.updateIn(
-  //   ["board", grid,
-  //   0,
-  //   grid => {
-  //     let board = grid.get("board");
-  //     //Horizontal Check
-  //     board.forEach(row=>{
-  //       if(Math.abs(row.get(0)+row.get(1)+row(2))===3){
-  //         grid.set("winner",row.get(0));
-  //       }
-  //     });
-  //     //Vertical Check
-  //     board.forEach((row,index)=>{
-  //       if(Math.abs(board.get(0).get(index)+board.get(1).get(index)+board.get(2).get(index))===3){
-  //         grid.set("winner",board.get(0).get(index));
-  //       }
-  //     });
-  //     //Diagonal Check
-  //     if(Math.abs(board.get(0).get(0)+board.get(1).get(1)+board.get(2).get(2))===3){
-  //       grid.set("winner", board.get(0).get(0));
-  //     }
-  //     if(Math.abs(board.get(0).get(2)+board.get(1).get(1)+board.get(2).get(0))===3){
-  //       grid.set("winner", board.get(0).get(2));
-  //     }
-  //   }
-  //   ]
-  // );
-  // return winner;
+  //Check Winner in Grid
+  let winner = placed.updateIn(
+    ["board", grid],
+    0,
+    grid => {
+      let board = grid.get("board");
+      let new_grid;
+      //Horizontal Check
+      board.forEach(row=>{
+        if(Math.abs(row.get(0)+row.get(1)+row.get(2))===3){
+          new_grid = grid.set("winner",row.get(0));
+        }
+      });
+      //Vertical Check
+      board.forEach((row,index)=>{
+        if(Math.abs(board.get(0).get(index)+board.get(1).get(index)+board.get(2).get(index))===3){
+          new_grid=grid.set("winner",board.get(0).get(index));
+        }
+      });
+      //Diagonal Check
+      if(Math.abs(board.get(0).get(0)+board.get(1).get(1)+board.get(2).get(2))===3){
+        new_grid=grid.set("winner", board.get(0).get(0));
+      }
+      if(Math.abs(board.get(0).get(2)+board.get(1).get(1)+board.get(2).get(0))===3){
+        new_grid=grid.set("winner", board.get(0).get(2));
+      }
+      return Map({board: board, selectable: grid.get("selectable"), winner: new_grid?new_grid.get("winner"):grid.get("winner")});
+    }
+  );
+  //Check Winner in Game
 }
 // export function modIndicator(state, playerId, label, value, op){
 //   if (op==="replace"){
