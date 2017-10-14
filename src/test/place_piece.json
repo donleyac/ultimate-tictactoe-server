@@ -3,55 +3,55 @@
   [
     {
       "board": [[0,0,0],[0,0,0],[0,0,0]],
-       "selectable": true,
-       "winner": null
+       "selectable": false,
+       "winner": 1
      },
      {
        "board": [[0,0,0],[0,0,0],[0,0,0]],
-        "selectable": true,
-        "winner": null
+        "selectable": false,
+        "winner": 1
       },
       {
-        "board": [[0,0,0],[0,0,0],[0,0,0]],
+        "board": [[1,1,1],[0,0,0],[0,0,0]],
          "selectable": true,
-         "winner": null
+         "winner": 1
        }
     ],
     [
       {
         "board": [[0,0,0],[0,0,0],[0,0,0]],
-         "selectable": true,
-         "winner": null
+         "selectable": false,
+         "winner": 0
        },
        {
          "board": [[0,0,0],[0,0,0],[0,0,0]],
-          "selectable": true,
-          "winner": null
+          "selectable": false,
+          "winner": 0
         },
         {
           "board": [[0,0,0],[0,0,0],[0,0,0]],
-           "selectable": true,
-           "winner": null
+           "selectable": false,
+           "winner": 0
          }
       ],
       [
         {
           "board": [[0,0,0],[0,0,0],[0,0,0]],
-           "selectable": true,
-           "winner": null
+           "selectable": false,
+           "winner": 0
          },
          {
            "board": [[0,0,0],[0,0,0],[0,0,0]],
-            "selectable": true,
-            "winner": null
+            "selectable": false,
+            "winner": 0
           },
           {
             "board": [[0,0,0],[0,0,0],[0,0,0]],
-             "selectable": true,
-             "winner": null
+             "selectable": false,
+             "winner": 0
            }
         ]
   ],
- "winner": null,
- "player": 1
+ "winner": 1,
+ "player": -1
 }
