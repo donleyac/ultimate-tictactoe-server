@@ -5,7 +5,7 @@ export default function reducer(state = INITIAL_STATE,action){
       return getInitial();
     case 'PLACE':
       return placePiece(state, action.grid, action.cell, action.playerId);
-    case 'LOCAL_SWITCH':
+    case 'SWITCH':
       return localSwitch(state);
   }
   return state;

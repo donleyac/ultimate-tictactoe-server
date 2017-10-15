@@ -35,12 +35,16 @@ export function placePiece(state, grid, cell, playerId) {
         let new_board = [...Array(3).keys()].map(i => Array(3).fill(0));
         board.forEach((row,r_index)=>{
           row.forEach((elem,index)=>{
-            let grid = board.get(r_index).get(index);
-            if(r_index!==cell[0] || index!==cell[1] && board.get(cell[0]).get(cell[1]).get("winner")===0){
-              new_board[r_index][index]={board:grid.get("board"), selectable: false, winner: grid.get("winner")};
+            if((r_index===cell[0] && index===cell[1]) || board.get(cell[0]).get(cell[1]).get("winner")!==0){
+              if(elem.get("winner")){
+                new_board[r_index][index]={board:elem.get("board"), selectable: false, winner: elem.get("winner")};
+              }
+              else {
+                new_board[r_index][index]={board:elem.get("board"), selectable: true, winner: elem.get("winner")};
+              }
             }
             else {
-              new_board[r_index][index]={board:grid.get("board"), selectable: true, winner: grid.get("winner")};
+              new_board[r_index][index]={board:elem.get("board"), selectable: false, winner: elem.get("winner")};
             }
           });
         });
@@ -64,7 +68,7 @@ export function placePiece(state, grid, cell, playerId) {
       state => {
         let board = state.get("board");
         let winner = checkWinner(board);
-        return Map({board: board, winner: winner, player:playerId*-1});
+        return Map({board: board, winner: winner, player:playerId*-1, local_player: state.get("local_player")});
       }
     );
     return game_winner;
@@ -119,7 +123,7 @@ function checkWinner(board) {
 }
 
 export function localSwitch(state){
-  state.updateIn(
+  return state.updateIn(
     ["local_player"],
     0,
     player => player*-1
