@@ -53,5 +53,6 @@
         ]
   ],
  "winner": 1,
- "player": -1
+ "player": -1,
+ "local_player":1
 }

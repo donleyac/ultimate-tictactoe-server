@@ -15,7 +15,8 @@ export function getInitial() {
   return Map({
     board: fromJS(board),
     winner: 0,
-    player: 1
+    player: 1,
+    local_player: 1
   });
 }
 export function placePiece(state, grid, cell, playerId) {
@@ -117,66 +118,10 @@ function checkWinner(board) {
   return 0;
 }
 
-// export function modIndicator(state, playerId, label, value, op){
-//   if (op==="replace"){
-//     return state.updateIn(
-//       ["playersById",playerId, 'indicators', label],
-//       0,
-//       indicator => value
-//     );
-//   }
-//   else {
-//     return state.updateIn(
-//       ["playersById",playerId, 'indicators', label],
-//       0,
-//       indicator => indicator + value
-//     );
-//   }
-// }
-// export function modCollection(state, collect, prop, val, op){
-//   //need to cast val to immutable for add and comparisons
-//   if(val instanceof Array){
-//     val = List(val);
-//   }
-//   let findIndex = function(curr,target){
-//     return curr.findIndex(function(elem){
-//       if(Iterable.isIterable(elem)){
-//         return is(elem.get(5), target.get(5));
-//       }
-//       else {
-//         return is(elem, target);
-//       }
-//     })
-//   }
-//   let remove = function(curr, target){
-//     return curr.delete(findIndex(curr,target));
-//   }
-//   //TODO Method is already generic, may be able to work with just a unique operation
-//   if(state.getIn(["collections",collect,"layout"])==="free" && prop==="content" && op==="chg"){
-//     return state.updateIn(
-//       ["collections", collect, prop],
-//       0,
-//       content => content.set(findIndex(content, val), val));
-//   }
-//   else {
-//     if(op==="add"){
-//       return state.updateIn(
-//        ["collections", collect, prop],
-//        0,
-//        content => content.push(val));
-//     }
-//     else if(op==="rm"){
-//       return state.updateIn(
-//         ["collections", collect, prop],
-//         0,
-//         content => remove(content, val));
-//     }
-//     //Replace list, mainly for re-ordering
-//     else {
-//       return state.updateIn(
-//         ["collections", collect, prop],
-//         0,
-//         content => val);
-//     }
-//   }
-// }
+export function localSwitch(state){
+  state.updateIn(
+    ["local_player"],
+    0,
+    player => player*-1
+  );
+}
