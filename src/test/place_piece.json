@@ -13,41 +13,41 @@
       },
       {
         "board": [[1,1,1],[0,0,0],[0,0,0]],
-         "selectable": true,
+         "selectable": false,
          "winner": 1
        }
     ],
     [
       {
         "board": [[0,0,0],[0,0,0],[0,0,0]],
-         "selectable": false,
+         "selectable": true,
          "winner": 0
        },
        {
          "board": [[0,0,0],[0,0,0],[0,0,0]],
-          "selectable": false,
+          "selectable": true,
           "winner": 0
         },
         {
           "board": [[0,0,0],[0,0,0],[0,0,0]],
-           "selectable": false,
+           "selectable": true,
            "winner": 0
          }
       ],
       [
         {
           "board": [[0,0,0],[0,0,0],[0,0,0]],
-           "selectable": false,
+           "selectable": true,
            "winner": 0
          },
          {
            "board": [[0,0,0],[0,0,0],[0,0,0]],
-            "selectable": false,
+            "selectable": true,
             "winner": 0
           },
           {
             "board": [[0,0,0],[0,0,0],[0,0,0]],
-             "selectable": false,
+             "selectable": true,
              "winner": 0
            }
         ]

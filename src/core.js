@@ -27,8 +27,18 @@ export function placePiece(state, grid, cell, playerId) {
       0,
       board => playerId
     );
+    //Check Winner in Grid
+    let grid_winner = placed.updateIn(
+      ["board", grid[0], grid[1]],
+      0,
+      grid => {
+        let board = grid.get("board");
+        let winner = checkWinner(board);
+        return Map({board: board, selectable: grid.get("selectable"), winner: winner});
+      }
+    );
     //Set selectable
-    let selectable = placed.updateIn(
+    let selectable = grid_winner.updateIn(
       ["board"],
       0,
       board => {
@@ -51,18 +61,8 @@ export function placePiece(state, grid, cell, playerId) {
         return fromJS(new_board);
       }
     );
-    //Check Winner in Grid
-    let grid_winner = selectable.updateIn(
-      ["board", grid[0], grid[1]],
-      0,
-      grid => {
-        let board = grid.get("board");
-        let winner = checkWinner(board);
-        return Map({board: board, selectable: grid.get("selectable"), winner: winner});
-      }
-    );
     //Check Game Winner and change player
-    let game_winner = grid_winner.updateIn(
+    let game_winner = selectable.updateIn(
       [],
       0,
       state => {
