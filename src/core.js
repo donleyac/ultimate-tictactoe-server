@@ -1,4 +1,5 @@
 import {Iterable, fromJS, List, Map,is} from 'immutable';
+import {winningCells} from './consts.js';
 
 export const INITIAL_STATE = getInitial();
 export function getInitial() {
@@ -20,7 +21,8 @@ export function getInitial() {
   });
 }
 export function placePiece(state, grid, cell, playerId) {
-  if(playerId===state.get("player") && state.get("board").get(grid[0]).get(grid[1]).get("board").get(cell[0]).get(cell[1])===0){
+  let chosenCell = state.get("board").get(grid[0]).get(grid[1]).get("board").get(cell[0]).get(cell[1]);
+  if(playerId===state.get("player") && chosenCell===0){
     //Place Piece in cells
     let placed = state.updateIn(
       ["board", grid[0], grid[1], "board", cell[0], cell[1]],
@@ -73,10 +75,11 @@ export function placePiece(state, grid, cell, playerId) {
     );
     return game_winner;
   }
-  return {response: "Invalid Click"};
+  return state;
 }
 function checkWinner(board) {
-  if(Object(board.get(0).get(0))===board.get(0).get(0)) {    //Horizontal Check
+  if(Object(board.get(0).get(0))===board.get(0).get(0)) {  
+    //Horizontal Check
     for(let i=0; i<board.size; i++){
       let row = board.get(i);
       if(Math.abs(row.get(0).get("winner")+row.get(1).get("winner")+row.get(2).get("winner"))===3){
