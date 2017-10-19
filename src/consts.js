@@ -8,3 +8,9 @@ export const winningCells = [
   [0, 4, 8],
   [2, 4, 6]
 ];
+
+export const SIGNS = {
+  EMPTY: 0,
+  X: 1,
+  O: -1
+}

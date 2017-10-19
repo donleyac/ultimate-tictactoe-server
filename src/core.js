@@ -1,18 +1,13 @@
 import {Iterable, fromJS, List, Map,is} from 'immutable';
-import {winningCells} from './consts.js';
+import {winningCells, SIGNS} from './consts.js';
 
 export const INITIAL_STATE = getInitial();
 export function getInitial() {
-  let board = [...Array(3).keys()].map(i => Array(3).fill(0));
-  board.forEach(row=>{
-    row.forEach((elem,index)=>{
-      row[index] = {
-        board: fromJS([...Array(3).keys()].map(i => Array(3).fill(0))),
-        selectable: true,
-        winner: 0
-      }
-    })
-  })
+  let board = new Array(9).fill({
+    grid: new Array(9).fill(0),
+    selectable: true,
+    winner: 0
+  });
   return Map({
     board: fromJS(board),
     winner: 0,
@@ -21,22 +16,24 @@ export function getInitial() {
   });
 }
 export function placePiece(state, grid, cell, playerId) {
-  let chosenCell = state.get("board").get(grid[0]).get(grid[1]).get("board").get(cell[0]).get(cell[1]);
+  let chosenCell = state.get("board").get(grid).get("grid").get(cell);
   if(playerId===state.get("player") && chosenCell===0){
     //Place Piece in cells
     let placed = state.updateIn(
-      ["board", grid[0], grid[1], "board", cell[0], cell[1]],
+      ["board", grid, "grid", cell],
       0,
-      board => playerId
+      cell => playerId
     );
     //Check Winner in Grid
     let grid_winner = placed.updateIn(
-      ["board", grid[0], grid[1]],
+      ["board", grid],
       0,
-      grid => {
-        let board = grid.get("board");
-        let winner = checkWinner(board);
-        return Map({board: board, selectable: grid.get("selectable"), winner: winner});
+      board => {
+        return Map({
+          grid: board.get("grid"),
+          selectable: state.get("board").get(grid).get("selectable"),
+          winner: checkWinner(board.get("grid"))
+        });
       }
     );
     //Set selectable
@@ -44,21 +41,18 @@ export function placePiece(state, grid, cell, playerId) {
       ["board"],
       0,
       board => {
-        let new_board = [...Array(3).keys()].map(i => Array(3).fill(0));
-        board.forEach((row,r_index)=>{
-          row.forEach((elem,index)=>{
-            if((r_index===cell[0] && index===cell[1]) || board.get(cell[0]).get(cell[1]).get("winner")!==0){
-              if(elem.get("winner")){
-                new_board[r_index][index]={board:elem.get("board"), selectable: false, winner: elem.get("winner")};
-              }
-              else {
-                new_board[r_index][index]={board:elem.get("board"), selectable: true, winner: elem.get("winner")};
-              }
-            }
-            else {
-              new_board[r_index][index]={board:elem.get("board"), selectable: false, winner: elem.get("winner")};
-            }
-          });
+        let new_board = new Array(9);
+        board.forEach((elem,g_index)=>{
+          //Grid Index Matches Cell Index or
+          //Everything but winning grids when won grid chosen
+          if((g_index===cell ||
+            board.get(cell).get("winner")) &&
+            !elem.get("winner")){
+            new_board[g_index]={grid:elem.get("grid"), selectable: true, winner: elem.get("winner")};
+          }
+          else {
+            new_board[g_index]={grid:elem.get("grid"), selectable: false, winner: elem.get("winner")};
+          }
         });
         return fromJS(new_board);
       }
@@ -78,48 +72,26 @@ export function placePiece(state, grid, cell, playerId) {
   return state;
 }
 function checkWinner(board) {
-  if(Object(board.get(0).get(0))===board.get(0).get(0)) {  
-    //Horizontal Check
-    for(let i=0; i<board.size; i++){
-      let row = board.get(i);
-      if(Math.abs(row.get(0).get("winner")+row.get(1).get("winner")+row.get(2).get("winner"))===3){
-        return row.get(0).get("winner");
+  //Board
+  if(Object(board.get(0))===board.get(0)) {
+    for(let i = 0; i<board.size-1; i++) {
+      const [a,b,c] = winningCells[i];
+      if(board.get(a).get("winner") === board.get(b).get("winner") &&
+      board.get(b).get("winner") === board.get(c).get("winner") &&
+      board.get(c).get("winner") !== SIGNS.EMPTY) {
+        return board.get(a).get("winner");
       }
-    }
-    //Vertical Check
-    for(let i=0; i<board.size; i++){
-      if(Math.abs(board.get(0).get(i).get("winner")+board.get(1).get(i).get("winner")+board.get(2).get(i).get("winner"))===3){
-        return board.get(0).get(i).get("winner");
-      }
-    }
-    //Diagonal Check
-    if(Math.abs(board.get(0).get(0).get("winner")+board.get(1).get(1).get("winner")+board.get(2).get(2).get("winner"))===3){
-      return board.get(0).get(0).get("winner");
-    }
-    if(Math.abs(board.get(0).get(2).get("winner")+board.get(1).get(1).get("winner")+board.get(2).get(0).get("winner"))===3){
-      return board.get(0).get(2).get("winner");
     }
   }
+  //Grid
   else {
-    //Horizontal Check
-    for(let i=0; i<board.size; i++){
-      let row = board.get(i);
-      if(Math.abs(row.get(0)+row.get(1)+row.get(2))===3){
-        return row.get(0);
+    for(let i = 0; i<board.size-1; i++) {
+      const [a,b,c] = winningCells[i];
+      if(board.get(a) === board.get(b) &&
+      board.get(b) === board.get(c) &&
+      board.get(c) !== SIGNS.EMPTY) {
+        return board.get(a);
       }
-    }
-    //Vertical Check
-    for(let i=0; i<board.size; i++){
-      if(Math.abs(board.get(0).get(i)+board.get(1).get(i)+board.get(2).get(i))===3){
-        return board.get(0).get(i);
-      }
-    }
-    //Diagonal Check
-    if(Math.abs(board.get(0).get(0)+board.get(1).get(1)+board.get(2).get(2))===3){
-      return board.get(0).get(0);
-    }
-    if(Math.abs(board.get(0).get(2)+board.get(1).get(1)+board.get(2).get(0))===3){
-      return board.get(0).get(2);
     }
   }
   return 0;

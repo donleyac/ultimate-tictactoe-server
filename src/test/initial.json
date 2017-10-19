@@ -2,18 +2,18 @@
  "board": [
   {
     "grid": [0,0,0,0,0,0,0,0,0],
-    "selectable": false,
-    "winner": 1
+    "selectable": true,
+    "winner": 0
   },
   {
     "grid": [0,0,0,0,0,0,0,0,0],
-    "selectable": false,
-    "winner": 1
+    "selectable": true,
+    "winner": 0
   },
   {
-    "grid": [1,1,1,0,0,0,0,0,0],
-    "selectable": false,
-    "winner": 1
+    "grid": [0,0,0,0,0,0,0,0,0],
+    "selectable": true,
+    "winner": 0
   },
   {
     "grid": [0,0,0,0,0,0,0,0,0],
@@ -46,7 +46,7 @@
     "winner": 0
   }
 ],
- "winner": 1,
- "player": -1,
+ "winner": 0,
+ "player": 1,
  "local_player": 1
 }
