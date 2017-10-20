@@ -18,8 +18,27 @@ export function startServer(store) {
   //io.on('connection', socket..: action on new conn.
   //socket.emit(..: send state to socket(client)
   //socket.on('action',..: bind server store on client action
-  io.on('connection', (socket) => {
-    console.log("Socket connected: " + socket.id);
+  //TODO Move usernames and rooms to db
+  var usernames = {};
+  var rooms = {'apple':[], 'bottle':[]};
+  io.sockets.on('connection', socket => {
+    socket.on('create', room => {
+      rooms.push(room);
+      socket.emit('updaterooms', rooms, socket.room);
+    });
+    socket.on('join', (username, room) => {
+      socket.username = username;
+      usernames[username] = room;
+      socket.join(room);
+      socket.broadcast.to(room).emit('updateroom', username+ ' has connected to this room');
+      socket.emit('updaterooms', rooms, room);
+    });
+    socket.on('disconnect', () => {
+      delete usernames[socket.username];
+      io.sockets.emit('updateusers', usernames);
+      socket.broadcast.to(room).emit('updateroom', username+ ' has disconnected to this room');
+      socket.leave(socket.room);
+    });
     socket.emit('state', store.getState().toJS());
     socket.on('action', store.dispatch.bind(store));
   });
