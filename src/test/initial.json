@@ -48,5 +48,6 @@
 ],
  "winner": 0,
  "player": 1,
- "local_player": 1
+ "mode": null,
+ "user": {}
 }

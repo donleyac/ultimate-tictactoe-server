@@ -10,7 +10,7 @@ export function startServer(store) {
   app.use(routes);
   const server = http.createServer(app);
   const io = socket(server);
-  //.subscribe called when state tree is modified by action
+  //.subscribe called when state tree is modified
   //io.emit sends state to all clients
   store.subscribe(
     () => io.emit('state', store.getState().toJS())
@@ -18,23 +18,28 @@ export function startServer(store) {
   //io.on('connection', socket..: action on new conn.
   //socket.emit(..: send state to socket(client)
   //socket.on('action',..: bind server store on client action
-  //TODO Move usernames and rooms to db
-  var usernames = {};
-  var rooms = {'apple':[], 'bottle':[]};
   io.sockets.on('connection', socket => {
-    socket.on('create', room => {
-      rooms.push(room);
-      socket.emit('updaterooms', rooms, socket.room);
-    });
-    socket.on('join', (username, room) => {
+    socket.on('username', username =>{
       socket.username = username;
-      usernames[username] = room;
+      //send verification back to frontend
+      //TODO need to transform username with unique id
+      socket.emit('usernameSuccess', username);
+    });
+    socket.on('create', room => {
+      //send verification back to frontend
+      //TODO add user validation whether they can join room
+      //Also probably return secret room key used for validation
+      socket.emit('joinSuccess', room);
       socket.join(room);
-      socket.broadcast.to(room).emit('updateroom', username+ ' has connected to this room');
-      socket.emit('updaterooms', rooms, room);
+    });
+    socket.on('join', room => {
+      socket.join(room);
+      //send verification back to frontend
+      //TODO add user validation whether they can join room
+      socket.emit('joinSuccess', room);
+      socket.broadcast.to(room).emit('updateroom', socket.username+ ' has connected to this room');
     });
     socket.on('disconnect', () => {
-      delete usernames[socket.username];
       io.sockets.emit('updateusers', usernames);
       socket.broadcast.to(room).emit('updateroom', username+ ' has disconnected to this room');
       socket.leave(socket.room);

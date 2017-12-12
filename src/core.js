@@ -12,17 +12,18 @@ export function getInitial() {
     board: fromJS(board),
     winner: 0,
     player: 1,
-    local_player: 1
+    mode: null,
+    user: fromJS({})
   });
 }
-export function placePiece(state, grid, cell, playerId) {
+export function placePiece(state, grid, cell, player) {
   let chosenCell = state.get("board").get(grid).get("grid").get(cell);
-  if(playerId===state.get("player") && chosenCell===0){
+  if(player===state.get("player") && chosenCell===0){
     //Place Piece in cells
     let placed = state.updateIn(
       ["board", grid, "grid", cell],
       0,
-      cell => playerId
+      cell => player
     );
     //Check Winner in Grid
     let grid_winner = placed.updateIn(
@@ -63,8 +64,10 @@ export function placePiece(state, grid, cell, playerId) {
       0,
       state => {
         let board = state.get("board");
+        let mode = state.get("mode");
+        let user = state.get("user");
         let winner = checkWinner(board);
-        return Map({board: board, winner: winner, player:playerId*-1, local_player: state.get("local_player")});
+        return Map({board: board, winner: winner, player:player, mode:mode, user:user});
       }
     );
     return game_winner;
@@ -96,10 +99,9 @@ function checkWinner(board) {
   }
   return 0;
 }
-
-export function localSwitch(state){
+export function switchPlayer(state){
   return state.updateIn(
-    ["local_player"],
+    ["player"],
     0,
     player => player*-1
   );
