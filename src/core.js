@@ -19,34 +19,26 @@ export function startGame(state, room) {
   return state.setIn([room, "game"], Map({
     board: fromJS(board),
     winner: 0,
-    player: 1
+    activePlayer: 1
   }));
 }
-//TODO modify so it's specific to room
-export function placePiece(state, grid, cell, player) {
-  let chosenCell = state.get("board").get(grid).get("grid").get(cell);
-  if(player===state.get("player") && chosenCell===0){
+export function placePiece(state, room, grid, cell, player) {
+  let chosenCell = state.getIn([room,"game","board",grid,"grid",cell]);
+  if(player===state.getIn([room,"game","activePlayer"]) && chosenCell===0){
     //Place Piece in cells
     let placed = state.updateIn(
-      ["board", grid, "grid", cell],
+      [room, "game","board", grid, "grid", cell],
       0,
       cell => player
     );
     //Check Winner in Grid
-    let grid_winner = placed.updateIn(
-      ["board", grid],
-      0,
-      board => {
-        return Map({
-          grid: board.get("grid"),
-          selectable: state.get("board").get(grid).get("selectable"),
-          winner: checkWinner(board.get("grid"))
-        });
-      }
-    );
+    let gridState = placed.getIn([room,"game","board", grid,"grid"]);
+    let grid_winner = placed.setIn(
+      [room, "game","board", grid, "grid", "winner"],
+      winner=>checkwinner(gridState));
     //Set selectable
     let selectable = grid_winner.updateIn(
-      ["board"],
+      [room,"game","board"],
       0,
       board => {
         let new_board = new Array(9);
@@ -66,17 +58,8 @@ export function placePiece(state, grid, cell, player) {
       }
     );
     //Check Game Winner and change player
-    let game_winner = selectable.updateIn(
-      [],
-      0,
-      state => {
-        let board = state.get("board");
-        let mode = state.get("mode");
-        let user = state.get("user");
-        let winner = checkWinner(board);
-        return Map({board: board, winner: winner, player:player, mode:mode, user:user});
-      }
-    );
+    let boardState = selectable.getIn([room,"game","board"]);
+    let game_winner = selectable.setIn([room,"game","board","winner"], checkwinner(boardState));
     return game_winner;
   }
   return state;
@@ -107,9 +90,9 @@ function checkWinner(board) {
   return 0;
 }
 //TODO change so it's specific to room
-export function switchPlayer(state){
+export function switchPlayer(state, room){
   return state.updateIn(
-    ["player"],
+    [room,"game","activePlayer"],
     0,
     player => player*-1
   );
