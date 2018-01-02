@@ -1,7 +1,6 @@
 import express from 'express';
 import http from 'http';
 import socket from 'socket.io';
-import axios from 'axios';
 import routes from './routes.js';
 
 export function startServer(store) {
@@ -25,27 +24,33 @@ export function startServer(store) {
       //TODO need to transform username with unique id
       socket.emit('usernameSuccess', username);
     });
-    socket.on('create', room => {
+    socket.on('create', (room, action) => {
       //send verification back to frontend
       //TODO add user validation whether they can join room
       //Also probably return secret room key used for validation
-      socket.emit('joinSuccess', room);
       socket.join(room);
+      //Add room/user to server store
+      //Required because roomid will be parent for roomState
+      store.dispatch({type:'CREATE_ROOM', room: room, user:socket.username});
+      //Callback to client to set their room
+      socket.emit('joinSuccess', room);
     });
     socket.on('join', room => {
       socket.join(room);
+      socket.room = room;
       //send verification back to frontend
       //TODO add user validation whether they can join room
       socket.emit('joinSuccess', room);
       socket.broadcast.to(room).emit('updateroom', socket.username+ ' has connected to this room');
     });
-    socket.on('disconnect', () => {
-      io.sockets.emit('updateusers', usernames);
-      socket.broadcast.to(room).emit('updateroom', username+ ' has disconnected to this room');
+    socket.on('disconnect', ()=> {
+      socket.broadcast.to(socket.room).emit('updateroom', socket.username+ ' has disconnected to this room');
       socket.leave(socket.room);
+      io.emit('roomsStatus', io.sockets.adapter.rooms);
     });
     socket.emit('state', store.getState().toJS());
     socket.on('action', store.dispatch.bind(store));
+    socket.emit('roomsStatus', io.sockets.adapter.rooms);
   });
   server.listen(port, () => console.log(`Listening on port ${port}`));
 }

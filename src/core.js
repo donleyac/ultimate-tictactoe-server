@@ -2,20 +2,27 @@ import {Iterable, fromJS, List, Map,is} from 'immutable';
 import {winningCells, SIGNS} from './consts.js';
 
 export const INITIAL_STATE = getInitial();
-export function getInitial() {
+export function getInitial(){
+  return Map();
+}
+export function createRoom(state, room, user) {
+  return state.set(room, Map({
+    users: fromJS([user])
+  }));
+}
+export function startGame(state, room) {
   let board = new Array(9).fill({
     grid: new Array(9).fill(0),
     selectable: true,
     winner: 0
   });
-  return Map({
+  return state.setIn([room, "game"], Map({
     board: fromJS(board),
     winner: 0,
-    player: 1,
-    mode: null,
-    user: fromJS({})
-  });
+    player: 1
+  }));
 }
+//TODO modify so it's specific to room
 export function placePiece(state, grid, cell, player) {
   let chosenCell = state.get("board").get(grid).get("grid").get(cell);
   if(player===state.get("player") && chosenCell===0){
@@ -99,6 +106,7 @@ function checkWinner(board) {
   }
   return 0;
 }
+//TODO change so it's specific to room
 export function switchPlayer(state){
   return state.updateIn(
     ["player"],
