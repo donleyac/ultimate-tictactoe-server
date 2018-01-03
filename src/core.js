@@ -19,8 +19,17 @@ export function startGame(state, room) {
   return state.setIn([room, "game"], Map({
     board: fromJS(board),
     winner: 0,
-    activePlayer: 1
+    activePlayer: 1,
+    minPlayers: 2,
+    players: List()
   }));
+}
+export function joinGame(state, room, user){
+  return state.updateIn(
+    [room, "game", "players"],
+    0,
+    players=>players.push(user)
+  )
 }
 export function placePiece(state, room, grid, cell, player) {
   let chosenCell = state.getIn([room,"game","board",grid,"grid",cell]);
