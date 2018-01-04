@@ -21,15 +21,31 @@ export function startGame(state, room) {
     winner: 0,
     activePlayer: 1,
     minPlayers: 2,
-    players: List()
+    players: Map()
   }));
 }
 export function joinGame(state, room, user){
-  return state.updateIn(
+  let minPlayers = state.getIn([room,"game", minPlayers]);
+  let joinedState = state.updateIn(
     [room, "game", "players"],
     0,
-    players=>players.push(user)
+    players=>{
+      //TODO add logic that checks if user is in players before adding them
+      return players.set(user, null);
+    }
   )
+  let players = joinedState.getIn([room,"game","players"]);
+  let assignedPl;
+  if(minPlayers===players.count()){
+    //TODO create better mapping function, maybe take depending on game mode
+    assignedPl = players.mapEntries((entry, index) => {
+      if(index==0){
+        return -1;
+      }
+      return 1;
+    })
+  }
+  return joinedState.setIn([room,"game","players"], assignedPl);
 }
 export function placePiece(state, room, grid, cell, player) {
   let chosenCell = state.getIn([room,"game","board",grid,"grid",cell]);
