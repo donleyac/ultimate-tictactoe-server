@@ -10,6 +10,11 @@ export function createRoom(state, room, user) {
     users: fromJS([user])
   }));
 }
+export function joinRoom(state, room, user) {
+  return state.updateIn(["rooms", room, "users"],
+  0,
+  existingUsers=>existingUsers.push(user));
+}
 export function startGame(state, room) {
   let board = new Array(9).fill({
     grid: new Array(9).fill(0),
@@ -25,7 +30,7 @@ export function startGame(state, room) {
   }));
 }
 export function joinGame(state, room, user){
-  let minPlayers = state.getIn(["rooms", room,"game", minPlayers]);
+  let minPlayers = state.getIn(["rooms", room,"game", "minPlayers"]);
   let joinedState = state.updateIn(
     ["rooms", room, "game", "players"],
     0,
@@ -47,14 +52,14 @@ export function joinGame(state, room, user){
   }
   return joinedState;
 }
-export function placePiece(state, room, grid, cell, player) {
+export function placePiece(state, room, grid, cell, playerId) {
   let chosenCell = state.getIn(["rooms", room,"game","board",grid,"grid",cell]);
-  if(player===state.getIn(["rooms", room,"game","activePlayer"]) && chosenCell===0){
+  if(playerId===state.getIn(["rooms", room,"game","activePlayer"]) && chosenCell===0){
     //Place Piece in cells
     let placed = state.updateIn(
       ["rooms", room, "game","board", grid, "grid", cell],
       0,
-      cell => player
+      cell => playerId
     );
     //Check Winner in Grid
     let gridState = placed.getIn(["rooms", room,"game","board", grid,"grid"]);
@@ -73,10 +78,10 @@ export function placePiece(state, room, grid, cell, player) {
           if((g_index===cell ||
             board.get(cell).get("winner")) &&
             !elem.get("winner")){
-            new_board[g_index]={grid:elem.get("grid"), selectable: true, winner: elem.get("winner")};
+            new_board[g_index]=elem.set("selectable", true);
           }
           else {
-            new_board[g_index]={grid:elem.get("grid"), selectable: false, winner: elem.get("winner")};
+            new_board[g_index]=elem.set("selectable", false);
           }
         });
         return fromJS(new_board);
@@ -84,12 +89,13 @@ export function placePiece(state, room, grid, cell, player) {
     );
     //Check Game Winner and change player
     let boardState = selectable.getIn(["rooms", room,"game","board"]);
-    let game_winner = selectable.setIn(["rooms", room,"game","board","winner"], checkwinner(boardState));
+    let game_winner = selectable.setIn(["rooms", room,"game","board","winner"], checkWinner(boardState));
     return game_winner;
   }
   return state;
 }
 function checkWinner(board) {
+  console.log("checkWinner", board);
   //Board
   if(Object(board.get(0))===board.get(0)) {
     for(let i = 0; i<board.size-1; i++) {
@@ -117,7 +123,7 @@ function checkWinner(board) {
 //TODO change so it's specific to room
 export function switchPlayer(state, room){
   return state.updateIn(
-    [room,"game","activePlayer"],
+    ["rooms", room,"game","activePlayer"],
     0,
     player => player*-1
   );

@@ -31,14 +31,15 @@ export function startServer(store) {
       socket.join(room);
       //Add room/user to server store
       //Required because roomid will be parent for roomState
+      //TODO have frontend send an action instead of recreating this
       store.dispatch({type:'CREATE_ROOM', room: room, user:socket.username});
       //Callback to client to set their room
       socket.emit('joinSuccess', room);
     });
     socket.on('join', room => {
       socket.join(room);
-      socket.room = room;
       //send verification back to frontend
+      store.dispatch({type:'JOIN_ROOM', room: room, user:socket.username});
       //TODO add user validation whether they can join room
       socket.emit('joinSuccess', room);
       socket.broadcast.to(room).emit('updateroom', socket.username+ ' has connected to this room');

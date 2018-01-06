@@ -1,4 +1,4 @@
-import {getInitial, startGame, placePiece,switchPlayer, createRoom, joinGame, INITIAL_STATE} from './core.js';
+import {getInitial, startGame, placePiece,switchPlayer, createRoom,joinRoom, joinGame, INITIAL_STATE} from './core.js';
 export default function reducer(state = INITIAL_STATE,action){
   switch(action.type) {
     case 'INITIAL_STATE':
@@ -13,6 +13,8 @@ export default function reducer(state = INITIAL_STATE,action){
       return switchPlayer(state, action.room);
     case 'CREATE_ROOM':
       return createRoom(state, action.room, action.user);
+    case 'JOIN_ROOM':
+      return joinRoom(state, action.room, action.user);
   }
   return state;
 }
