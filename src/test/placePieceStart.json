@@ -35,7 +35,7 @@
               0
             ],
             "selectable": true,
-            "winner": 0
+            "winner": 1
           },
           {
             "grid": [
@@ -50,7 +50,7 @@
               0
             ],
             "selectable": true,
-            "winner": 0
+            "winner": 1
           },
           {
             "grid": [
@@ -65,7 +65,7 @@
               0
             ],
             "selectable": true,
-            "winner": 0
+            "winner": 1
           },
           {
             "grid": [
@@ -80,7 +80,7 @@
               0
             ],
             "selectable": true,
-            "winner": 0
+            "winner": 1
           },
           {
             "grid": [
@@ -95,7 +95,7 @@
               0
             ],
             "selectable": true,
-            "winner": 0
+            "winner": 1
           },
           {
             "grid": [
@@ -110,7 +110,7 @@
               0
             ],
             "selectable": true,
-            "winner": 0
+            "winner": 1
           },
           {
             "grid": [
@@ -125,7 +125,7 @@
               0
             ],
             "selectable": true,
-            "winner": 0
+            "winner": 1
           },
           {
             "grid": [
@@ -140,7 +140,7 @@
               0
             ],
             "selectable": true,
-            "winner": 0
+            "winner": 1
           }
         ],
         "winner": 0,
