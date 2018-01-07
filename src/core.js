@@ -6,6 +6,10 @@ export function getInitial(){
   return Map({rooms: Map()});
 }
 export function createRoom(state, room, user) {
+  //Room already exists, do not create
+  if(state.getIn(["rooms", room])){
+    return null;
+  }
   return state.setIn(["rooms", room], Map({
     users: fromJS([user])
   }));
@@ -15,6 +19,18 @@ export function joinRoom(state, room, user) {
   0,
   existingUsers=>existingUsers.push(user));
 }
+export function leaveRoom(state, room, user) {
+  return state.updateIn(["rooms", room, "users"],
+  0,
+  existingUsers=> {
+    for(let i=0; i<existingUsers.count(); i++){
+      if(existingUsers.get(i)===user){
+        return existingUsers.delete(i);
+      }
+    }
+  });
+}
+
 export function startGame(state, room) {
   let board = new Array(9).fill({
     grid: new Array(9).fill(0),
