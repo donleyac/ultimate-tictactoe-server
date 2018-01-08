@@ -17,7 +17,7 @@ export default function reducer(state = INITIAL_STATE,action){
       let createdState = createRoom(state, action.room, exposedSocket.username);
       //Even if room already exists, it joins the existing room
       exposedSocket.join(action.room);
-      exposedSocket.emit('joinSuccess', action.room);
+      exposedSocket.emit('roomSuccess', action.room);
       //check if room actually created
       if(createdState){
         return createdState;
@@ -26,11 +26,12 @@ export default function reducer(state = INITIAL_STATE,action){
       return joinRoom(state, action.room, exposedSocket.username);
     case 'JOIN_ROOM':
       exposedSocket.join(action.room);
-      exposedSocket.emit('joinSuccess', action.room);
+      exposedSocket.emit('roomSuccess', action.room);
       exposedSocket.broadcast.to(action.room).emit('updateroom', exposedSocket.username+ ' has entered');
       return joinRoom(state, action.room, exposedSocket.username);
     case 'LEAVE_ROOM':
       exposedSocket.leave(action.room);
+      exposedSocket.emit('roomSuccess', null);
       exposedSocket.broadcast.to(action.room).emit('updateroom', exposedSocket.username+ ' has left');
       return leaveRoom(state, action.room, exposedSocket.username);
   }
