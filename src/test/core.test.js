@@ -17,7 +17,6 @@ test('Create Room', ()=>{
   expect(createRoomST).toMatchSnapshot();
   //Create Room that already existingUsers
   expect(createRoom(createRoomST, "apple", "john")).toMatchSnapshot();
-
 });
 test('Join Game', () => {
   expect(joinGame(fromJS(joinGameST), "apple", "john")).toMatchSnapshot();

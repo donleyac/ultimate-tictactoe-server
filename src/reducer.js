@@ -34,6 +34,8 @@ export default function reducer(state = INITIAL_STATE,action){
       exposedSocket.emit('roomSuccess', null);
       exposedSocket.broadcast.to(action.room).emit('updateroom', exposedSocket.username+ ' has left');
       return leaveRoom(state, action.room, exposedSocket.username);
+    case 'SEND_MESSAGE_ROOM':
+      exposedSocket.broadcast.to(action.room);
   }
   return state;
 }

@@ -1,3 +1,23 @@
+exports[`test Create Room 1`] = `
+Object {
+  "rooms": Object {
+    "apple": Object {
+      "users": Array [
+        "alex",
+      ],
+    },
+  },
+}
+`;
+
+exports[`test Create Room 2`] = `null`;
+
+exports[`test Initial State 1`] = `
+Object {
+  "rooms": Object {},
+}
+`;
+
 exports[`test Join Game 1`] = `
 Object {
   "room": "apple",
