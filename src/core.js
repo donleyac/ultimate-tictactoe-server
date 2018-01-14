@@ -20,17 +20,20 @@ export function joinRoom(state, room, user) {
   existingUsers=>existingUsers.push(user));
 }
 export function leaveRoom(state, room, user) {
-  return state.updateIn(["rooms", room, "users"],
-  0,
-  existingUsers=> {
-    for(let i=0; i<existingUsers.count(); i++){
-      if(existingUsers.get(i)===user){
-        return existingUsers.delete(i);
+  if(state.getIn("rooms", room, "users")){
+    return state.updateIn(["rooms", room, "users"],
+    0,
+    existingUsers=> {
+      for(let i=0; i<existingUsers.count(); i++){
+        if(existingUsers.get(i)===user){
+          return existingUsers.delete(i);
+        }
       }
-    }
-  });
+    });
+  }
+  return state;
 }
-
+//Game info needs to go through server for validation, should not validate on client
 export function startGame(state, room) {
   let board = new Array(9).fill({
     grid: new Array(9).fill(0),
