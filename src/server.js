@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import socket from 'socket.io';
 import routes from './routes.js';
-import {createRoom, joinRoom, leaveRoom, startGame, joinGame, placePiece, switchPlayer} from './action_creators.js';
+import {createRoom, joinRoom, leaveRoom, startGame, joinGame, placePiece, switchPlayer} from './redux/action_creators.js';
 
 export function startServer(store) {
   const port = process.env.PORT || 8090;

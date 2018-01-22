@@ -1,4 +1,4 @@
-import makeStore from './store';
+import makeStore from './redux/store.js';
 import {startServer} from './server';
 
 export const store = makeStore();

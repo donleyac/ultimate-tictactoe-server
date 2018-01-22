@@ -15,29 +15,25 @@ db.authenticate()
   });
 
 const RoomModel = db.define('room', {
-  name: { type: Sequelize.STRING }
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true
+  }
 });
 
 const UserModel = db.define('user', {
-  username: { type: Sequelize.STRING }
+  username: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true
+  }
 });
 
 RoomModel.hasMany(UserModel);
 UserModel.belongsTo(RoomModel);
 
-// create mock data with a seed, so we always get the same
-casual.seed(123);
-db.sync({ force: true }).then(() => {
-  _.times(10, () => {
-    return RoomModel.create({
-      name: casual.word
-    }).then((room) => {
-      return room.createUser({
-        username: casual.word
-      });
-    });
-  });
-});
+db.sync({force:false});
 
 const Room = db.models.room;
 const User = db.models.user;

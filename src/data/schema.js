@@ -4,7 +4,14 @@ import resolvers from './resolvers';
 const typeDefs = `
 type Query {
   room(name: String): Room
+  user(username: String): User
   allRooms: [Room]
+  allUsers: [User]
+}
+type Mutation {
+  addUser(username: String): User
+  createRoom(name: String, username: String): Room
+  joinRoom(name: String, username: String): User
 }
 type Room {
   id: Int
