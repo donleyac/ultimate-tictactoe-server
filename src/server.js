@@ -3,6 +3,9 @@ import http from 'http';
 import socket from 'socket.io';
 import routes from './routes.js';
 import {createRoom, joinRoom, leaveRoom, startGame, joinGame, placePiece, switchPlayer} from './redux/action_creators.js';
+import resolver from './data/resolvers.js';
+const query= resolver['Query'];
+const mutation = resolver['Mutation'];
 
 export function startServer(store) {
   const port = process.env.PORT || 8090;
@@ -20,26 +23,32 @@ export function startServer(store) {
   //socket.on('action',..: bind server store on client action
   io.sockets.on('connection', socket => {
     socket.on('setUsername', username =>{
-      socket.username = username;
-      //TODO need to transform username with unique id
-      socket.emit('usernameSuccess', username);
+      mutation.addUser(null,{username:username}).then(dbUser=>{
+        let dbUsername = dbUser.dataValues.username;
+        socket.username = dbUsername;
+        socket.emit('usernameSuccess', dbUsername);
+      });
     });
     socket.on('createRoom', (room)=>{
-      socket.room = room;
-      socket.join(room);
-      //TODO need to verify with data store before emitting
-      //Want room info to be available to everyone
-      store.dispatch(createRoom(room, socket.username));
-      socket.emit('roomSuccess', room);
+      mutation.createRoom(null,{name:room, username: socket.username}).then(dbRoom=>{
+        let dbName = dbRoom.dataValues.name;
+        socket.room = dbName;
+        socket.join(dbName);
+        store.dispatch(createRoom(dbName, socket.username));
+        socket.emit('roomSuccess', dbName);
+      });
     });
     socket.on('joinRoom', (room)=>{
-      socket.room = room;
-      socket.join(room);
-      //Want room info to be available to everyone
-      store.dispatch(joinRoom(room, socket.username));
-      socket.emit('roomSuccess', room);
+      mutation.joinRoom(null,{name:room, username: socket.username}).then(dbRoom=>{
+        let dbName = dbRoom.dataValues.name;
+        socket.room = dbName;
+        socket.join(dbName);
+        store.dispatch(joinRoom(dbName, socket.username));
+        socket.emit('roomSuccess', dbName);
+      });
     });
     socket.on('leaveRoom', ()=>{
+      mutation.leaveRoom(null,{username: socket.username});
       store.dispatch(leaveRoom(socket.room, socket.username));
       socket.leave(socket.room);
       socket.room=null;
@@ -58,8 +67,9 @@ export function startServer(store) {
     socket.on('switchPlayer', ()=>{
       store.dispatch(switchPlayer(socket.room));
     });
-    socket.on('sendMessage', action=>{
-      socket.broadcast.to(socket.room).emit('sendMessageClients', action);
+    socket.on('sendMessage', message=>{
+      //TODO change to socket.broadcast.to to reduce sending it to socket that initially sent message
+      io.sockets.in(socket.room).emit('sendMessageClients', message);
     });
     socket.on('disconnect', ()=> {
       store.dispatch(leaveRoom(socket.room, socket.username));

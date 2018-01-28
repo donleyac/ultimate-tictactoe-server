@@ -11,7 +11,8 @@ type Query {
 type Mutation {
   addUser(username: String): User
   createRoom(name: String, username: String): Room
-  joinRoom(name: String, username: String): User
+  joinRoom(name: String, username: String): Room
+  leaveRoom(username:String): User
 }
 type Room {
   id: Int

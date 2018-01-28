@@ -15,9 +15,11 @@ const resolvers = {
     }
   },
   Mutation: {
+    //TODO check for uniqueniess, add onto version
     addUser(root, args) {
       return User.build(args).save();
     },
+    //TODO check for uniqueness, if exists, add them to room
     createRoom(root, args) {
       return Room.build({name: args.name}).save().then(result=>{
         let roomId = result.dataValues.id;
@@ -28,8 +30,12 @@ const resolvers = {
     joinRoom(root,args) {
       return Room.find({name: args.name}).then(result=>{
         let roomId = result.dataValues.id;
-        return User.update({roomId: roomId},{where: {username: args.username}});
+        User.update({roomId: roomId},{where: {username: args.username}});
+        return result;
       })
+    },
+    leaveRoom(root,args) {
+      return User.update({roomId: null},{where: {username: args.username}});
     }
   },
   Room: {
