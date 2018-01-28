@@ -13,6 +13,7 @@ type Mutation {
   createRoom(name: String, username: String): Room
   joinRoom(name: String, username: String): Room
   leaveRoom(username:String): User
+  truncateAll: User
 }
 type Room {
   id: Int

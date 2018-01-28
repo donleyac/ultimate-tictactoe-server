@@ -20,8 +20,16 @@ export function joinRoom(state, room, user) {
   existingUsers=>existingUsers.push(user));
 }
 export function leaveRoom(state, room, user) {
-  if(state.getIn("rooms", room, "users")){
-    return state.updateIn(["rooms", room, "users"],
+  let roomState;
+  //Remove them from their game if its in the room
+  if(state.getIn(["rooms", room, "game"])){
+    roomState = leaveGame(state, room, user);
+  }
+  else {
+    roomState = state;
+  }
+  if(roomState.getIn("rooms", room, "users")){
+    return roomState.updateIn(["rooms", room, "users"],
     0,
     existingUsers=> {
       for(let i=0; i<existingUsers.count(); i++){
@@ -31,7 +39,7 @@ export function leaveRoom(state, room, user) {
       }
     });
   }
-  return state;
+  return roomState;
 }
 //Game info needs to go through server for validation, should not validate on client
 export function startGame(state, room) {
@@ -71,6 +79,18 @@ export function joinGame(state, room, user){
   }
   return joinedState;
 }
+export function leaveGame(state, room, user){
+  console.log("leaveGame", state);
+  let removedState = state.updateIn(
+    ["rooms", room, "game", "players"],
+    0,
+    players=>{
+      return players.delete(user);
+    }
+  )
+  return removedState;
+}
+
 export function placePiece(state, room, grid, cell, playerId) {
   // const roomPath = ["rooms", room];
   // const boardPath = roomPath.push("game", "board");

@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import socket from 'socket.io';
 import routes from './routes.js';
-import {createRoom, joinRoom, leaveRoom, startGame, joinGame, placePiece, switchPlayer} from './redux/action_creators.js';
+import {createRoom, joinRoom, leaveRoom, startGame, joinGame, placePiece, switchPlayer, leaveGame} from './redux/action_creators.js';
 import resolver from './data/resolvers.js';
 const query= resolver['Query'];
 const mutation = resolver['Mutation'];
@@ -61,6 +61,9 @@ export function startServer(store) {
     socket.on('joinGame', ()=>{
       store.dispatch(joinGame(socket.room, socket.username));
     });
+    socket.on('leaveGame', ()=>{
+      store.dispatch(leaveGame(socket.room, socket.username));
+    })
     socket.on('placePiece',(grid,cell,playerId)=>{
       store.dispatch(placePiece(socket.room,grid,cell,playerId));
     });
@@ -69,7 +72,10 @@ export function startServer(store) {
     });
     socket.on('sendMessage', message=>{
       //TODO change to socket.broadcast.to to reduce sending it to socket that initially sent message
-      io.sockets.in(socket.room).emit('sendMessageClients', message);
+      io.sockets.in(socket.room).emit('sendMessageClients', socket.username, message);
+    });
+    socket.on('truncateAll',()=>{
+      mutation.truncateAll();
     });
     socket.on('disconnect', ()=> {
       store.dispatch(leaveRoom(socket.room, socket.username));

@@ -32,6 +32,13 @@ export function joinGame(room, user){
     username: user
   }
 }
+export function leaveGame(room, user) {
+  return {
+    type: 'LEAVE_GAME',
+    room:room,
+    username: user
+  }
+}
 export function placePiece(room, grid, cell, playerId) {
   return {
     type: 'PLACE',

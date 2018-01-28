@@ -36,6 +36,11 @@ const resolvers = {
     },
     leaveRoom(root,args) {
       return User.update({roomId: null},{where: {username: args.username}});
+    },
+    truncateAll(args){
+      User.truncate({ cascade: true });
+      Room.truncate({ cascade: true });
+      return null;
     }
   },
   Room: {
