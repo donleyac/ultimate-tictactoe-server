@@ -6,41 +6,30 @@ import resolver from './data/resolvers.js';
 const query= resolver['Query'];
 const mutation = resolver['Mutation'];
 
-export function startServer(store) {
+export function startServer() {
   const port = process.env.PORT || 8090;
   const app = express();
   app.use(routes);
   const server = http.createServer(app);
   const io = socket(server);
-  //.subscribe called when state tree is modified
-  //io.emit sends state to all clients
-  //TODO only send relevant state to clients
-  store.subscribe(
-    () => io.emit('state', store.getState().toJS())
-  );
   //io.on('connection', socket..: action on new conn.
-  //socket.emit(..: send state to socket(client)
-  //socket.on('action',..: bind server store on client action
   io.sockets.on('connection', socket => {
-    socket.on('sendMessage', message=>{
-      //TODO change to socket.broadcast.to to reduce sending it to socket that initially sent message
-      io.sockets.in(socket.room).emit('sendMessageClients', socket.username, message);
-    });
     socket.on('truncateAll',()=>{
       mutation.truncateAll();
     });
     socket.on('disconnect', ()=> {
-      mutation.leaveRoom(null,{username: socket.username});
-      store.dispatch({
-        type: 'LEAVE_ROOM',
-        room: socket.room,
-        username: socket.username
+      mutation.leaveRoom(null,{username: socket.username}).then(()=>{
+        io.sockets.in(socket.room).emit('action',
+        {
+          type: 'LEAVE_ROOM',
+          room: socket.room,
+          username: socket.username
+        });
+        socket.leave(socket.room);
+        socket.room=null;
+        socket.emit('roomSuccess', null);
       });
-      socket.leave(socket.room);
-      socket.room=null;
-      socket.emit('roomSuccess', null);
     });
-    socket.emit('state', store.getState().toJS());
     socket.on('action', action=>{
       switch(action.type) {
         case 'CREATE_USERNAME':
@@ -84,7 +73,7 @@ export function startServer(store) {
     function _dispatch(action) {
       action["room"] = socket.room;
       action["username"] = socket.username;
-      store.dispatch(action);
+      io.sockets.in(socket.room).emit('action', action);
     }
   });
   server.listen(port, () => console.log(`Listening on port ${port}`));
