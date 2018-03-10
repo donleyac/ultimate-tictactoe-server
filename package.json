@@ -1,5 +1,5 @@
 {
-	"name": "graphql-chat",
+	"name": "ultimate-tictactoe-server",
 	"version": "0.0.0",
 	"description": "Ultimate TicTacToe",
 	"main": "index.js",
