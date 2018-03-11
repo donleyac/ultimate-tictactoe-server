@@ -1,11 +1,14 @@
-import { Message, User } from '../models';
+import { Message, User, Chatroom } from '../models';
 
 const ChatroomResolve = {
 	users(obj) {
 		return User.findAll({
-			where: {
-				chatroomId: obj.id
-			}
+			include: [{
+				model: Chatroom,
+				where: {
+					id: obj.id
+				}
+			}]
 		});
 	},
 	messages(obj) {

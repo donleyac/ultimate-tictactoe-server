@@ -15,10 +15,13 @@ const chatroom = (obj, args, context) => {
 const users = (obj, args, context) => {
 	return 'chatroomId' in args ?
 		User.findAll({
-			where: {
-				chatroomId: args.chatroomId
-			}
-		}) :
+			include: [{
+				model: Chatroom,
+				where: {
+					id: args.chatroomId
+				}
+			}]
+		}):
 		User.findAll();
 };
 

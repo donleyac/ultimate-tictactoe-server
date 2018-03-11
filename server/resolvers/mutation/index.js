@@ -1,4 +1,4 @@
-import { Message } from '../../models/index';
+import {Chatroom,Message, User } from '../../models/index';
 import { pubsub } from '../../subscriptions';
 
 const addMessage = (obj, args, context) => {
@@ -18,4 +18,30 @@ const addMessage = (obj, args, context) => {
     });
 };
 
-export { addMessage };
+const createUser = (obj, args, context) => {
+  return User.create({
+    displayName: args.displayName,
+  })
+    .then(user => {
+      return user.dataValues;
+    })
+    .catch(e => {
+      console.error(e);
+    });
+};
+
+// const addUserRoom = (obj, args, context) => {
+//   return Chatroom.find({
+//     id: args.id,
+//   })
+//     .then(room => {
+//       return user.dataValues;
+//     })
+//     .catch(e => {
+//       console.error(e);
+//     });
+// };
+
+
+
+export { addMessage, createUser };

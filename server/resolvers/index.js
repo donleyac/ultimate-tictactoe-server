@@ -1,7 +1,7 @@
 import { ChatroomResolve, MessageResolve } from './associations';
 import { chatrooms, chatroom, users, user, messages } from './query';
 
-import { addMessage } from './mutation';
+import { addMessage, createUser } from './mutation';
 import { messageAdded } from './subscription';
 
 const resolvers = {
@@ -15,7 +15,8 @@ const resolvers = {
 	Chatroom: ChatroomResolve,
 	Message: MessageResolve,
 	Mutation: {
-		addMessage
+		addMessage,
+		createUser
 	},
 	Subscription: {
 		messageAdded

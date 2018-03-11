@@ -18,10 +18,11 @@ const User = db.define('user', {
 
 Message.belongsTo(User);
 Message.belongsTo(Chatroom);
-Chatroom.hasMany(User);
+Chatroom.belongsToMany(User, {through: 'user_rooms'});
 Chatroom.hasMany(Message);
-User.belongsTo(Chatroom);
+User.belongsToMany(Chatroom, {through: 'user_rooms'});
 User.hasMany(Message);
+
 
 casual.seed(123);
 db.sync({ force: true }).then(() => {

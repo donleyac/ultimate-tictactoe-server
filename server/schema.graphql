@@ -8,6 +8,7 @@ type Chatroom {
 type User {
 	id: ID
 	displayName: String
+	chatroomId: Int
 }
 
 type Message {
@@ -27,6 +28,7 @@ type Query {
 
 type Mutation {
 	addMessage(text: String!, userId: Int!, chatroomId: Int!): Message
+	createUser(displayName: String!): User
 }
 
 type Subscription {
