@@ -5,7 +5,7 @@ export const messageAdded = {
   subscribe: withFilter(
     () => pubsub.asyncIterator('messageAdded'),
     (payload, args) => {
-      return payload.messageAdded.chatroomId === args.chatroomId;
+      return payload.messageAdded.roomId === args.roomId;
     }
   ),
 };

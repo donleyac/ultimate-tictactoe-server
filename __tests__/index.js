@@ -8,22 +8,22 @@ import path from 'path';
 import fs from 'fs';
 
 import { subscriptionManager } from '../server/subscriptions';
-import { Chatroom, User, Message } from '../server/models/index';
-import { chatrooms, chatroom, users, user, messages } from '../server/resolvers/query';
+import { Room, User, Message } from '../server/models/index';
+import { rooms, room, users, user, messages } from '../server/resolvers/query';
 import { addMessage } from '../server/resolvers/mutation';
 
 
 test.before(t => {
 	casual.seed(123);
 	return db.sync({ force: true }).then(() => {
-		Chatroom.create({
+		Room.create({
 			title: casual.words(1)
-		}).then(chatroom => {
+		}).then(room => {
 			times(5, () => {
-				return chatroom.createUser({
+				return room.createUser({
 					displayName: casual.first_name
 				}).then(user => {
-					return chatroom.createMessage({
+					return room.createMessage({
 						text: casual.sentences(1),
 						userId: user.dataValues.id,
 						createdAt: casual.unix_time
@@ -38,7 +38,7 @@ const messageStream = [];
 test.before('Load subscription manager', t => {
 	subscriptionManager.subscribe({
 		query: `subscription {
-		messageAdded(chatroomId:1){
+		messageAdded(roomId:1){
 			id
 			text
 		}
@@ -54,21 +54,21 @@ test.before('Load subscription manager', t => {
 });
 
 test.before('Data seeded correctly', async t => {
-	const chatrooms = await Chatroom.findAll();
+	const rooms = await Room.findAll();
 	const users = await User.findAll();
 	const messages = await Message.findAll();
-	t.is(chatrooms.length, 1);
+	t.is(rooms.length, 1);
 	t.is(users.length, 5);
 	t.is(messages.length, 5);
 });
 
-test('Query chatrooms', async t => {
-	const data = await chatrooms({}, {}, {});
+test('Query rooms', async t => {
+	const data = await rooms({}, {}, {});
 	t.is(data.length, 1);
 });
 
-test('Query chatroom 1', async t => {
-	const data = await chatroom({}, { id: 1 }, {});
+test('Query room 1', async t => {
+	const data = await room({}, { id: 1 }, {});
 	t.true(data.hasOwnProperty('title'));
 });
 
@@ -77,8 +77,8 @@ test('Query users', async t => {
 	t.is(data.length, 5);
 });
 
-test('Query users from chatroom 1', async t => {
-	const data = await users({}, { chatroomId: 1 }, {});
+test('Query users from room 1', async t => {
+	const data = await users({}, { roomId: 1 }, {});
 	t.is(data.length, 5);
 });
 
@@ -92,15 +92,15 @@ test('Query messages', async t => {
 	t.is(data.length, 5);
 });
 
-test('Query chatroom messages', async t => {
-	const data = await messages({}, { chatroomId: 1 }, {});
+test('Query room messages', async t => {
+	const data = await messages({}, { roomId: 1 }, {});
 	t.is(data.length, 5);
 });
 
 let msg = {
 	text: 'Testing adding a message',
 	userId: 1,
-	chatroomId: 1
+	roomId: 1
 };
 test.after('Mutation addMessage', async t => {
 	const data = await addMessage({}, msg, {});

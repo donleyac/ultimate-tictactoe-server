@@ -1,11 +1,11 @@
-import {Chatroom,Message, User } from '../../models/index';
+import {Room,Message, User } from '../../models/index';
 import { pubsub } from '../../subscriptions';
 
 const addMessage = (obj, args, context) => {
   return Message.create({
     text: args.text,
     userId: args.userId,
-    chatroomId: args.chatroomId,
+    roomId: args.roomId,
   })
     .then(message => {
       return message.dataValues;
@@ -31,7 +31,7 @@ const createUser = (obj, args, context) => {
 };
 
 // const addUserRoom = (obj, args, context) => {
-//   return Chatroom.find({
+//   return Room.find({
 //     id: args.id,
 //   })
 //     .then(room => {

@@ -1,4 +1,4 @@
-type Chatroom {
+type Room {
 	id: ID
 	title: String
 	users: [User]
@@ -8,7 +8,7 @@ type Chatroom {
 type User {
 	id: ID
 	displayName: String
-	chatroomId: Int
+	roomId: Int
 }
 
 type Message {
@@ -19,20 +19,20 @@ type Message {
 }
 
 type Query {
-	chatrooms: [Chatroom]
-	chatroom(id:Int!): Chatroom
-	messages(chatroomId:Int): [Message]
-	users(chatroomId:Int): [User]
+	rooms: [Room]
+	room(id:Int!): Room
+	messages(roomId:Int): [Message]
+	users(roomId:Int): [User]
 	user(id:Int, search:String): User
 }
 
 type Mutation {
-	addMessage(text: String!, userId: Int!, chatroomId: Int!): Message
+	addMessage(text: String!, userId: Int!, roomId: Int!): Message
 	createUser(displayName: String!): User
 }
 
 type Subscription {
-	messageAdded(chatroomId: Int!): Message
+	messageAdded(roomId: Int!): Message
 }
 
 schema {

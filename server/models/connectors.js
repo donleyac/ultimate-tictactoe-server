@@ -1,8 +1,8 @@
 import Sequelize from 'sequelize';
 
-let sqlName = process.env.NODE_ENV === 'production' ? 'chatroom' : 'testing';
+let sqlName = process.env.NODE_ENV === 'production' ? 'room' : 'testing';
 
-const sqlite = new Sequelize('chatroom', null, null, {
+const sqlite = new Sequelize('room', null, null, {
 	dialect: 'sqlite',
 	storage: `./${sqlName}.sqlite`,
 	logging: false

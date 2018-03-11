@@ -1,10 +1,10 @@
-import { Message, User, Chatroom } from '../models';
+import { Message, User, Room } from '../models';
 
-const ChatroomResolve = {
+const RoomResolve = {
 	users(obj) {
 		return User.findAll({
 			include: [{
-				model: Chatroom,
+				model: Room,
 				where: {
 					id: obj.id
 				}
@@ -14,7 +14,7 @@ const ChatroomResolve = {
 	messages(obj) {
 		return Message.findAll({
 			where: {
-				chatroomId: obj.id
+				roomId: obj.id
 			},
 			order: [
 				['createdAt', 'DESC']
@@ -33,4 +33,4 @@ const MessageResolve = {
 	}
 }
 
-export { ChatroomResolve, MessageResolve };
+export { RoomResolve, MessageResolve };

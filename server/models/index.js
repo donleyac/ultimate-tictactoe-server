@@ -3,7 +3,7 @@ import casual from 'casual';
 import { sqlite as db } from './connectors';
 import { times } from 'lodash';
 
-const Chatroom = db.define('chatroom', {
+const Room = db.define('room', {
 	title: { type: Sequelize.STRING }
 });
 
@@ -17,24 +17,24 @@ const User = db.define('user', {
 });
 
 Message.belongsTo(User);
-Message.belongsTo(Chatroom);
-Chatroom.belongsToMany(User, {through: 'user_rooms'});
-Chatroom.hasMany(Message);
-User.belongsToMany(Chatroom, {through: 'user_rooms'});
+Message.belongsTo(Room);
+Room.belongsToMany(User, {through: 'user_rooms'});
+Room.hasMany(Message);
+User.belongsToMany(Room, {through: 'user_rooms'});
 User.hasMany(Message);
 
 
 casual.seed(123);
 db.sync({ force: true }).then(() => {
 	times(6, () => {
-		Chatroom.create({
+		Room.create({
 			title: casual.words(1)
-		}).then(chatroom => {
+		}).then(room => {
 			times(5, () => {
-				return chatroom.createUser({
+				return room.createUser({
 					displayName: casual.first_name
 				}).then(user => {
-					return chatroom.createMessage({
+					return room.createMessage({
 						text: casual.sentences(1),
 						userId: user.dataValues.id,
 						createdAt: casual.unix_time
@@ -46,4 +46,4 @@ db.sync({ force: true }).then(() => {
 
 });
 
-export { Chatroom, User, Message };
+export { Room, User, Message };
