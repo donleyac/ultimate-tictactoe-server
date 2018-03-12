@@ -1,7 +1,7 @@
 import { RoomResolve, MessageResolve } from './associations';
 import { rooms, room, users, user, messages } from './query';
 
-import { addMessage, createUser } from './mutation';
+import { addMessage, createUser, addUserRoom } from './mutation';
 import { messageAdded } from './subscription';
 
 const resolvers = {
@@ -16,7 +16,8 @@ const resolvers = {
 	Message: MessageResolve,
 	Mutation: {
 		addMessage,
-		createUser
+		createUser,
+		addUserRoom
 	},
 	Subscription: {
 		messageAdded

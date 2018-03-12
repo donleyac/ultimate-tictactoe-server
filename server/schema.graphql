@@ -29,6 +29,7 @@ type Query {
 type Mutation {
 	addMessage(text: String!, userId: Int!, roomId: Int!): Message
 	createUser(displayName: String!): User
+	addUserRoom(userId: Int!, roomId: Int!): Room
 }
 
 type Subscription {
